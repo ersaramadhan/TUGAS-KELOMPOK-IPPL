@@ -92,7 +92,7 @@ Catatan penyeimbangan (balancing): aliran masuk/keluar Level 2 sama dengan prose
 
 ---
 
-## 4. PSPEC (Structured English) — jalur: `*858#` → 1 Transfer Pulsa → eksekusi
+## 4. PSPEC — jalur: `*858#` → 1 Transfer Pulsa → eksekusi
 
 **P1.0 Terima Dial & Tampilkan Menu**
 ```
