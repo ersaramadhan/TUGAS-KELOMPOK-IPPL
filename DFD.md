@@ -172,5 +172,5 @@ SEND SMS ke penerima: "Anda menerima pulsa Rp[Nominal] dari [No_Pengirim]. ID [I
 ---
 
 ## 5. Kode
-Lihat `ussd_858_transfer_pulsa.py` (Python 3, tanpa dependensi). Pemetaan: `dial()` = P1.0, `normalize_msisdn` = P2.1, `validate_amount` = P2.2, `check_eligibility` = P2.3, state `CONFIRM` = P2.4, `execute_transfer` = P2.5 + P4.0.
+Lihat `pulsa.py` (Python 3, tanpa dependensi). Pemetaan: `dial()` = P1.0, `normalize_msisdn` = P2.1, `validate_amount` = P2.2, `check_eligibility` = P2.3, state `CONFIRM` = P2.4, `execute_transfer` = P2.5 + P4.0.
 Untuk dikumpulkan: unggah ke GitHub (`git init`, `git add .`, `git commit`, `git push`).
