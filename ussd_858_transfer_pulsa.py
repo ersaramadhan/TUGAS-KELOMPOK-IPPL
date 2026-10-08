@@ -1,24 +1,11 @@
-"""
-Simulasi layanan USSD *858#  ->  Menu 1: Transfer Pulsa  (sampai eksekusi)
-
-Jalur yang dikerjakan:
-  Dial *858#  ->  pilih 1 (Transfer Pulsa)  ->  input nomor tujuan
-  ->  input nominal  ->  konfirmasi  ->  eksekusi  ->  notifikasi
-
-Catatan: aturan bisnis (nominal minimum/maksimum, biaya admin, format nomor)
-adalah ASUMSI untuk keperluan tugas, bukan aturan resmi operator.
-Jalankan:  python ussd_858_transfer_pulsa.py
-Tes     :  python ussd_858_transfer_pulsa.py --test
-"""
 import re
 import sys
 from dataclasses import dataclass, field
 
-# ------------------------------------------------------------------ KONFIGURASI
 MIN_TRANSFER = 5_000
 MAX_TRANSFER = 100_000
 ADMIN_FEE = 1_000
-MIN_SISA_SALDO = 0          # saldo pengirim setelah transfer tidak boleh < ini
+MIN_SISA_SALDO = 0         
 
 MAIN_MENU = (
     "1.Transfer Pulsa\n"
@@ -30,7 +17,6 @@ MAIN_MENU = (
 )
 
 
-# ------------------------------------------------------------------ DATA STORE (D1)
 @dataclass
 class Subscriber:
     msisdn: str
@@ -99,7 +85,6 @@ def execute_transfer(db: Database, sender: str, dest: str, amount: int):
     return trx_id
 
 
-# ------------------------------------------------------------------ SESI USSD (P1 + P2)
 class USSDSession:
     """Mesin status (state machine) satu sesi USSD."""
 
@@ -147,7 +132,6 @@ class USSDSession:
 
         if self.state == "CONFIRM":
             if text == "1":
-                # cek ulang sebelum eksekusi (saldo bisa berubah saat sesi berjalan)
                 err = check_eligibility(self.db, self.msisdn, self.dest, self.amount)
                 self.state = "END"
                 if err:
@@ -161,8 +145,6 @@ class USSDSession:
 
         return "Sesi berakhir."
 
-
-# ------------------------------------------------------------------ DEMO & TEST
 def make_db():
     db = Database()
     db.subscribers["6281111111111"] = Subscriber("6281111111111", 50_000)
@@ -187,11 +169,11 @@ def run_tests():
     assert db.get(me).balance == 50_000 - 10_000 - ADMIN_FEE
     assert db.get("6282222222222").balance == 12_000
 
-    s = USSDSession(db, me); s.dial("*858#")          # saldo tidak cukup
+    s = USSDSession(db, me); s.dial("*858#")         
     s.reply("1"); s.reply("082222222222")
     assert "tidak mencukupi" in s.reply("100000")
 
-    s = USSDSession(db, me); s.dial("*858#")          # dibatalkan
+    s = USSDSession(db, me); s.dial("*858#")          
     s.reply("1"); s.reply("082222222222"); s.reply("5000")
     assert "dibatalkan" in s.reply("2")
     print("Semua tes lulus.")
