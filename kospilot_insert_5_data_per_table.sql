@@ -1,12 +1,10 @@
 -- KosPilot - INSERT 5 data untuk setiap tabel
--- Target: MySQL 8.0+
 -- Jalankan SETELAH seluruh 9 tabel berhasil dibuat.
 
 USE kospilot;
 
 -- =========================================================
 -- 1. PROFILES
--- 2 owner dan 3 tenant yang memiliki akun aplikasi.
 -- =========================================================
 INSERT INTO profiles (id, full_name, email, role, phone) VALUES
 (1, 'Andi Pratama', 'andi.pratama@kospilot.test', 'owner', '081234567801'),
@@ -17,7 +15,6 @@ INSERT INTO profiles (id, full_name, email, role, phone) VALUES
 
 -- =========================================================
 -- 2. PROPERTIES
--- owner_id harus mengacu ke profiles dengan role owner.
 -- =========================================================
 INSERT INTO properties (id, owner_id, name, address, payment_account) VALUES
 (1, 1, 'Kos Melati', 'Jl. Melati No. 10, Bandung', 'BCA 1234567890 a.n. Andi Pratama'),
@@ -28,7 +25,6 @@ INSERT INTO properties (id, owner_id, name, address, payment_account) VALUES
 
 -- =========================================================
 -- 3. ROOMS
--- Setiap kamar terhubung ke satu properti.
 -- =========================================================
 INSERT INTO rooms
 (id, property_id, name, floor, monthly_price, yearly_price, status, facilities, internal_note)
@@ -41,9 +37,6 @@ VALUES
 
 -- =========================================================
 -- 4. TENANTS
--- active_room_id TIDAK diisi karena merupakan generated column.
--- Tenant 1-3 terhubung ke akun profiles.
--- Tenant 4-5 belum memiliki akun aplikasi, sehingga profile_id NULL.
 -- =========================================================
 INSERT INTO tenants
 (id, profile_id, property_id, room_id, full_name, email, phone, identity_number,
@@ -57,7 +50,6 @@ VALUES
 
 -- =========================================================
 -- 5. BILLS
--- Setiap tagihan mengacu ke tenant dan kamar yang sesuai.
 -- =========================================================
 INSERT INTO bills
 (id, tenant_id, room_id, period, bill_type, amount, due_date, status, correction_note)
@@ -70,7 +62,6 @@ VALUES
 
 -- =========================================================
 -- 6. PAYMENTS
--- Setiap pembayaran mengacu ke satu bill.
 -- =========================================================
 INSERT INTO payments
 (id, bill_id, paid_at, amount, method, proof_path, note, verification_status)
@@ -83,7 +74,6 @@ VALUES
 
 -- =========================================================
 -- 7. EXPENSES
--- Lima pengeluaran operasional untuk lima properti.
 -- =========================================================
 INSERT INTO expenses
 (id, property_id, expense_date, category, amount, description, proof_path)
@@ -96,7 +86,6 @@ VALUES
 
 -- =========================================================
 -- 8. MAINTENANCE_REPORTS
--- Laporan tenant terhadap kamar yang ditempatinya.
 -- =========================================================
 INSERT INTO maintenance_reports
 (id, tenant_id, room_id, title, description, photo_path, priority, status, owner_note)
@@ -109,7 +98,6 @@ VALUES
 
 -- =========================================================
 -- 9. ACTIVITY_LOGS
--- Catatan aktivitas yang berkaitan dengan properti dan pengguna.
 -- =========================================================
 INSERT INTO activity_logs
 (id, property_id, actor_id, action, metadata)
@@ -122,7 +110,6 @@ VALUES
 
 -- =========================================================
 -- VERIFIKASI JUMLAH DATA
--- Setiap tabel harus menghasilkan total_data = 5.
 -- =========================================================
 SELECT 'profiles' AS nama_tabel, COUNT(*) AS total_data FROM profiles
 UNION ALL
