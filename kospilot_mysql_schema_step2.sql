@@ -1,6 +1,8 @@
--- KosPilot - Versi MySQL untuk Tugas Basis Data
--- Target: MySQL 8.0+
+-- KosPilot - Versi XAMPP / MariaDB
+-- Target: MySQL 8.0+ / MariaDB XAMPP
 -- Tahap 2: CREATE DATABASE dan CREATE TABLE
+
+DROP DATABASE IF EXISTS kospilot;
 
 CREATE DATABASE IF NOT EXISTS kospilot
   CHARACTER SET utf8mb4
@@ -9,8 +11,6 @@ CREATE DATABASE IF NOT EXISTS kospilot
 USE kospilot;
 
 -- 1. Data pengguna aplikasi: pemilik kos dan penghuni.
--- Pada Supabase, id terhubung ke auth.users. Pada versi tugas MySQL,
--- autentikasi eksternal dilepas agar schema dapat berdiri sendiri.
 CREATE TABLE IF NOT EXISTS profiles (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS rooms (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- 4. Data penghuni dan kamar yang ditempatinya.
+-- 4. Data penghuni dan kamar yang ditempatinya. (REVISI XAMPP)
 CREATE TABLE IF NOT EXISTS tenants (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     profile_id INT UNSIGNED,
@@ -73,14 +73,6 @@ CREATE TABLE IF NOT EXISTS tenants (
     status ENUM('active', 'leaving', 'left') NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    -- Pengganti partial unique index PostgreSQL:
-    -- hanya tenant berstatus 'active' yang menghasilkan room_id di kolom ini.
-    active_room_id INT UNSIGNED
-        GENERATED ALWAYS AS (
-            CASE WHEN status = 'active' THEN room_id ELSE NULL END
-        ) STORED,
-
-    CONSTRAINT uq_tenants_one_active_per_room UNIQUE (active_room_id),
     CONSTRAINT fk_tenants_profile
         FOREIGN KEY (profile_id) REFERENCES profiles(id)
         ON DELETE SET NULL
